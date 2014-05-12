@@ -1,15 +1,14 @@
 package main
 
 import (
-  "fmt"
-  "./go_sort"
+  "./sort"
   "os"
   "log"
 )
 
 func main() {
   // open the input file
-  file, err := os.Open("pennyinput")
+  file, err := os.Open("input")
   if err != nil {
     log.Fatal(err)
   }
@@ -20,11 +19,9 @@ func main() {
   }
   // generate original data
   data := make([][]byte, fi.Size()/100)
-  count := 1
   for i := range data {
     tmp := make([]byte, 100)
-    var err error
-    count, err = file.Read(tmp)
+    _, err := file.Read(tmp)
     if err != nil {
       log.Fatal(err)
     } else {
@@ -33,7 +30,45 @@ func main() {
   }
 
   // call HeapSort() to sort
-  go_sort.HeapSort(data, 0, len(data))
+  sort.HeapSort(data, 0, len(data))
+  // write in output file
+  file, err = os.Create("heapsort_output")
+  if err != nil {
+    log.Fatal(err)
+  }
+  for i := range data {
+    _, err := file.Write(data[i])
+    if err != nil {
+      log.Fatal(err)
+    }
+  }
 
-  fmt.Printf("read %d bytes: %q\n", count, data[0])
+  // regenerate original data
+  file, err = os.Open("input")
+  if err != nil {
+    log.Fatal(err)
+  }
+  for i := range data {
+    tmp := make([]byte, 100)
+    _, err := file.Read(tmp)
+    if err != nil {
+      log.Fatal(err)
+    } else {
+      data[i] = tmp
+    }
+  }
+
+  // call InsertionSort() to sort
+  sort.InsertionSort(data, 0, len(data))
+  // write in output file
+  file, err = os.Create("insertionsort_output")
+  if err != nil {
+    log.Fatal(err)
+  }
+  for i := range data {
+    _, err := file.Write(data[i])
+    if err != nil {
+      log.Fatal(err)
+    }
+  }
 }
