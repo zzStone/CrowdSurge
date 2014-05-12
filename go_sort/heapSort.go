@@ -1,17 +1,17 @@
 package sort
 
 // maintain max-heap property from index
-func siftDown(data []int, lo, hi, first int) {
+func siftDown(data [][]byte, lo, hi, first int) {
   root := lo
   for {
     child := 2*root + 1
     if child >= hi {
       break
     }
-    if child+1 < hi && data[first+child] < data[first+child+1] {
+    if child+1 < hi && less(data[first+child], data[first+child+1]) {
       child++
     }
-    if data[first+root] >= data[first+child] {
+    if !less(data[first+root], data[first+child]) {
       return
     }
     swap(data, first+root, first+child)
@@ -19,14 +19,29 @@ func siftDown(data []int, lo, hi, first int) {
   }
 }
 
+func less(a []byte, b []byte) bool {
+    // I assume a and b have the same length
+    n := 0
+    for n<len(a) {
+      if a[n] < b[n] {
+        return true
+      }
+      if a[n] > b[n] {
+        return false
+      }
+      n++
+    }
+    return false
+}
+
 // swap the index a and b of array
-func swap(data []int, a, b int) {
+func swap(data [][]byte, a, b int) {
   temp := data[a]
   data[a] =  data[b]
   data[b] = temp
 }
 
-func HeapSort(data []int, a, b int) {
+func HeapSort(data [][]byte, a, b int) {
   first := a
   lo := 0
   hi := b - a
