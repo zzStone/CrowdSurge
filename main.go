@@ -1,17 +1,74 @@
 package main
 
 import (
-  "fmt"
   "./sort"
+  "os"
+  "log"
 )
 
 func main() {
-  array := []int{4,9,5,7,1,8,2,6,3}
-  fmt.Println("The origin array is: ", array)
-  sort.HeapSort(array, 0, len(array))
-  fmt.Println("The sorted array is: ", array)
-  array = []int{4,9,5,7,1,8,2,6,3}
-  fmt.Println("The origin array is: ", array)
-  sort.InsertionSort(array, 0, len(array))
-  fmt.Println("The sorted array is: ", array)
+  // open the input file
+  file, err := os.Open("input")
+  if err != nil {
+    log.Fatal(err)
+  }
+  // get the file info
+  fi, err1 := file.Stat()
+  if err1 != nil {
+    log.Fatal(err1)
+  }
+  // generate original data
+  data := make([][]byte, fi.Size()/100)
+  for i := range data {
+    tmp := make([]byte, 100)
+    _, err := file.Read(tmp)
+    if err != nil {
+      log.Fatal(err)
+    } else {
+      data[i] = tmp
+    }
+  }
+
+  // call HeapSort() to sort
+  sort.HeapSort(data, 0, len(data))
+  // write in output file
+  file, err = os.Create("heapsort_output")
+  if err != nil {
+    log.Fatal(err)
+  }
+  for i := range data {
+    _, err := file.Write(data[i])
+    if err != nil {
+      log.Fatal(err)
+    }
+  }
+
+  // regenerate original data
+  file, err = os.Open("input")
+  if err != nil {
+    log.Fatal(err)
+  }
+  for i := range data {
+    tmp := make([]byte, 100)
+    _, err := file.Read(tmp)
+    if err != nil {
+      log.Fatal(err)
+    } else {
+      data[i] = tmp
+    }
+  }
+
+  // call InsertionSort() to sort
+  sort.InsertionSort(data, 0, len(data))
+  // write in output file
+  file, err = os.Create("insertionsort_output")
+  if err != nil {
+    log.Fatal(err)
+  }
+  for i := range data {
+    _, err := file.Write(data[i])
+    if err != nil {
+      log.Fatal(err)
+    }
+  }
 }
